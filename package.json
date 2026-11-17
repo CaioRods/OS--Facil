@@ -1,0 +1,10 @@
+{
+  "name": "os-facil",
+  "private": true,
+  "scripts": {
+    "test": "node tests/functional.cjs"
+  },
+  "devDependencies": {
+    "jsdom": "^31.0.1"
+  }
+}
