@@ -33,3 +33,6 @@ Dados locais em localStorage. Limpar dados do navegador ou desinstalar pode apag
 
 ## Interface
 Botões com vidro, feedback ao toque, contadores animados sem reconstruir a tela, carregamento com recuperação, logo vetorial e ícones instaláveis. Animações respeitam a preferência de movimento reduzido.
+
+## Demonstração em iPhone
+No PC, pressione **Ctrl + 8** com a página em foco para ativar a moldura de iPhone. Repita o atalho para sair, inclusive com o foco dentro da tela do aparelho. O aplicativo continua funcionando e as alterações ficam salvas no mesmo navegador. O modo inicia desligado e não altera os dados existentes.

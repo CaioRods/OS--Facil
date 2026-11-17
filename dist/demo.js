@@ -1,0 +1,19 @@
+(()=>{
+const embedded=new URLSearchParams(location.search).get('demo-screen')==='1'&&window.parent!==window;
+const shortcut=e=>e.ctrlKey&&!e.altKey&&!e.metaKey&&!e.shiftKey&&(e.code==='Digit8'||e.code==='Numpad8'||e.key==='8');
+if(embedded){
+ document.documentElement.classList.add('demo-screen');
+ document.addEventListener('keydown',e=>{if(!shortcut(e))return;e.preventDefault();e.stopPropagation();if(!e.repeat)parent.postMessage({type:'os-demo-toggle'},location.origin)},true);
+ window.addEventListener('message',e=>{if(e.origin!==location.origin||e.source!==parent||e.data?.type!=='os-demo-context')return;const c=e.data.context||{};if(['today','history','rates'].includes(c.page))page=c.page;if(['urban','rural'].includes(c.area))area=c.area;if(/^\d{4}-\d{2}-\d{2}$/.test(c.date))date=c.date;if(/^\d{4}-\d{2}$/.test(c.month))month=c.month;render()});
+ parent.postMessage({type:'os-demo-ready'},location.origin);return;
+}
+let stage=null,frame=null,lastFocus=null,oldOverflow='',oldScroll=0,closedDialogs=[],inertState=[];
+function fit(){if(!stage)return;const scale=Math.max(.1,Math.min(1,(innerWidth-48)/414,(innerHeight-64)/880));stage.style.setProperty('--phone-scale',String(scale))}
+function syncState(){try{const saved=JSON.parse(localStorage.getItem(key));if(saved&&Array.isArray(saved.rates)&&saved.days){state=saved;render()}}catch{notify('Não foi possível atualizar a visualização. Recarregue a página.')}}
+function close(){if(!stage)return;stage.remove();stage=null;frame=null;document.body.style.overflow=oldOverflow;inertState.forEach(([node,inert])=>{node.inert=inert});inertState=[];syncState();for(const dialog of closedDialogs){if(dialog.id==='name-dialog'&&state.profile?.name)continue;if(dialog.isConnected&&!dialog.open)dialog.showModal()}closedDialogs=[];window.scrollTo(0,oldScroll);if(lastFocus?.isConnected)lastFocus.focus({preventScroll:true});lastFocus=null}
+function open(){if(stage)return;lastFocus=document.activeElement;oldScroll=window.scrollY;oldOverflow=document.body.style.overflow;closedDialogs=Array.from(document.querySelectorAll('dialog[open]'));closedDialogs.forEach(d=>d.close());inertState=Array.from(document.querySelectorAll('header,.welcome,main,.nav')).map(node=>[node,node.inert]);inertState.forEach(([node])=>node.inert=true);document.body.style.overflow='hidden';stage=document.createElement('section');stage.id='iphone-demo';stage.setAttribute('role','dialog');stage.setAttribute('aria-modal','true');stage.setAttribute('aria-label','Demonstração do OS Fácil em iPhone');stage.innerHTML=`<div class="demo-caption">OS Fácil <span>Prévia no celular</span></div><div class="device-wrap"><div class="iphone-device"><div class="iphone-button left-one"></div><div class="iphone-button left-two"></div><div class="iphone-button right-one"></div><div class="iphone-display"><iframe title="OS Fácil funcionando no celular" src="/?demo-screen=1"></iframe><div class="iphone-status" aria-hidden="true"><span class="iphone-time"></span><span>▮▮▮ &nbsp; Wi-Fi &nbsp; ▰</span></div><div class="dynamic-island" aria-hidden="true"></div><div class="home-indicator" aria-hidden="true"></div></div></div></div><div class="demo-key">Ctrl + 8 <span>para sair da demonstração</span></div>`;frame=stage.querySelector('iframe');const now=new Date();stage.querySelector('.iphone-time').textContent=now.toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'});document.body.append(stage);fit();frame.focus();}
+function toggle(){stage?close():open()}
+document.addEventListener('keydown',e=>{if(!shortcut(e))return;e.preventDefault();e.stopPropagation();if(!e.repeat)toggle()},true);
+window.addEventListener('resize',fit);
+window.addEventListener('message',e=>{if(e.origin!==location.origin||e.source!==frame?.contentWindow)return;if(e.data?.type==='os-demo-toggle')close();else if(e.data?.type==='os-demo-ready')frame.contentWindow.postMessage({type:'os-demo-context',context:{page,area,date,month}},location.origin)});
+})();
