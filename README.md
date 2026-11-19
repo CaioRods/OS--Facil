@@ -36,3 +36,20 @@ Botões com vidro, feedback ao toque, contadores animados sem reconstruir a tela
 
 ## Demonstração em iPhone
 No PC, pressione **Ctrl + 8** com a página em foco para ativar a moldura de iPhone. Repita o atalho para sair, inclusive com o foco dentro da tela do aparelho. O aplicativo continua funcionando e as alterações ficam salvas no mesmo navegador. O modo inicia desligado e não altera os dados existentes.
+
+## Publicar na Vercel
+
+O arquivo `vercel.json` configura o projeto como site estático, servindo a pasta `dist`. Os arquivos já estão prontos; não é necessário executar build, instalar dependências na hospedagem ou configurar variáveis de ambiente.
+
+1. Na Vercel, use **Add New → Project** e importe **CaioRods/OS--Facil**.
+2. Mantenha **Root Directory** na raiz do repositório (`./`).
+3. Se aparecer uma escolha de framework, selecione **Other**. A saída é `dist`; os comandos de build e instalação ficam vazios conforme o arquivo de configuração. Remova eventuais overrides antigos no painel.
+4. Clique em **Deploy**. Se o projeto já estava conectado, este commit pode disparar um novo deploy automaticamente; confira a aba Deployments.
+
+O service worker é servido na raiz, com cache HTTP desativado para receber atualizações. Os demais arquivos exigem revalidação. O modo iPhone continua usando um iframe da mesma origem. Não há regra genérica que transforme arquivos ausentes em HTML.
+
+### Depois do deploy
+
+Abra o endereço HTTPS definitivo, aguarde o carregamento e instale o app no Chrome. Depois do primeiro acesso online e da ativação do service worker, teste fechar/reabrir com o modo avião para confirmar o uso offline no seu aparelho. Se você ativar proteção de acesso na Vercel, o primeiro login exige internet.
+
+Os dados são locais e separados por domínio: os registros feitos no endereço anterior do ChatGPT Sites não aparecem automaticamente no novo endereço da Vercel. Compartilhe os fechamentos antigos para guardar uma cópia antes de mudar de endereço.
