@@ -2,9 +2,10 @@
   "name": "os-facil",
   "private": true,
   "scripts": {
-    "test": "node tests/functional.cjs"
+    "test": "node tests/functional.cjs && node tests/features.cjs"
   },
   "devDependencies": {
-    "jsdom": "^31.0.1"
+    "jsdom": "^31.0.1",
+    "@napi-rs/canvas": "^0.1.100"
   }
 }

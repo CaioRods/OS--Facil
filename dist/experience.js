@@ -1,10 +1,10 @@
 (()=>{
 const $=id=>document.getElementById(id),nameDialog=$('name-dialog'),nameInput=$('user-name'),installDialog=$('install-dialog');
 let installPrompt=null,installReady=false,editing=false;
-function greet(){const name=typeof state.profile?.name==='string'?state.profile.name:'';$('greeting').textContent=name?`Olá, ${name}!`:'Olá!';$('profile-initial').textContent=name?Array.from(name)[0].toLocaleUpperCase('pt-BR'):'●';}
-function askName(edit=false){editing=edit;nameInput.value=state.profile?.name||'';nameDialog.showModal();}
+function greet(){const name=typeof state.profile?.name==='string'?state.profile.name:'';$('greeting').textContent=name?`Olá, ${name}!`:'Olá!';$('profile-initial').textContent=name?Array.from(name)[0].toLocaleUpperCase('pt-BR'):'●';window.OSProfile?.refresh();}
+function askName(edit=false){editing=edit;$('name-form').querySelector('button[type=submit]').textContent=edit?'Salvar perfil':'Começar meu dia ↗';nameInput.value=state.profile?.name||'';window.OSProfile?.open();nameDialog.showModal();}
 nameDialog.addEventListener('cancel',e=>{if(!editing)e.preventDefault()});
-$('name-form').onsubmit=e=>{e.preventDefault();const name=nameInput.value.trim().replace(/\s+/g,' ');if(!name){nameInput.setCustomValidity('Digite seu nome.');nameInput.reportValidity();return}nameInput.setCustomValidity('');const old=state.profile;state.profile={...old,name};if(save()){greet();nameDialog.close();notify(`Tudo pronto, ${name}!`)}else state.profile=old;};
+$('name-form').onsubmit=e=>{e.preventDefault();const name=nameInput.value.trim().replace(/\s+/g,' ');if(!name){nameInput.setCustomValidity('Digite seu nome.');nameInput.reportValidity();return}nameInput.setCustomValidity('');const old=state.profile;state.profile={...old,name,photo:window.OSProfile?OSProfile.photo():old?.photo||null};if(save()){greet();nameDialog.close();notify(`Tudo pronto, ${name}!`)}else state.profile=old;};
 nameInput.oninput=()=>nameInput.setCustomValidity('');$('profile-button').onclick=()=>askName(true);
 const reduced=()=>matchMedia('(prefers-reduced-motion: reduce)').matches;
 const activeTweens=new WeakMap();
